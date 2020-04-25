@@ -15,7 +15,7 @@ You'll find minigrep in `target/release/minigrep`
 case is added if the search is case sensistive
 
 ### Example:
-minigrep Ram file_to_match.txt case
+`minigrep Ram file_to_match.txt case`
 
 
 
