@@ -8,25 +8,34 @@ pub struct Configs {
 }
 
 impl Configs {
-    pub fn new(args: &Vec<String>) -> Result<Configs, &'static str> {
+    pub fn new(args: &mut std::env::Args) -> Result<Configs, &'static str> {
         if args.len() < 3 {
             return Err("\
 minigrep [pattern] [filename] case
 adding \"case\" is optional to enable case sensitive grep");
         }
-
-        let mut is_sensitive = false;
-
-        if let Some(o) = args.get(3) {
-            if o == "case" {
-                is_sensitive = true;
-            }
-        }
-
+        
+        args.next();
+        
+        let pattern = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Pattern Not got")
+        };
+        
+        let filename = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Filenane Not got")
+        };
+        
+        let is_case_sensitive = match args.next() {
+            Some(arg) => arg == "case",
+            None => false
+        };
+        
         Ok(Configs {
-            pattern: args[1].clone(),
-            filename: args[2].clone(),
-            is_case_sensitive: is_sensitive,
+            pattern,
+            filename,
+            is_case_sensitive,
         })
     }
 }
@@ -44,27 +53,19 @@ pub fn run(conf: Configs) -> Result<(), Box<dyn Error>> {
 }
 
 pub fn search_case_sensitive<'a>(pattern: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut vec: Vec<&'a str> = vec![];
-
-    for line in contents.lines() {
-        if line.contains(pattern) {
-            vec.push(line);
-        }
-    }
-
-    vec
+    contents.lines()
+    .filter(
+        |lin| lin
+        .contains(&pattern))
+    .collect()
 }
 
 pub fn search_case_insensitive<'a>(pattern: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut vec: Vec<&'a str> = vec![];
-    let pattern = pattern.to_lowercase();
-
-    for line in contents.lines() {
-        if line.to_lowercase().contains(&pattern) {
-            vec.push(line);
-        }
-    }
-    vec
+    contents.lines()
+    .filter(
+        |lin| lin.to_lowercase()
+        .contains(&pattern.to_lowercase()))
+    .collect()
 }
 
 pub fn print_output(out: Vec<&str>) {
