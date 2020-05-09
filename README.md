@@ -3,7 +3,7 @@ A minimalistic grep with rust.
 
 ### To build:
 
-    cargo build
+    cargo build --release
     cargo test
 
 You'll find minigrep in `target/release/minigrep`
