@@ -1,3 +1,6 @@
+//! minigrep
+//! Minimal grep program to sort out lines contaning text  
+
 use std::env;
 use std::process;
 

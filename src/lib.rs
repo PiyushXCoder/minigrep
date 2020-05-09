@@ -1,6 +1,7 @@
 use std::error::Error;
 use std::fs;
 
+/// Configuration to contain basic information of file and match operation
 pub struct Configs {
     pattern: String,
     filename: String,
@@ -8,6 +9,7 @@ pub struct Configs {
 }
 
 impl Configs {
+    /// create new configuration
     pub fn new(args: &mut std::env::Args) -> Result<Configs, &'static str> {
         if args.len() < 3 {
             return Err("\
@@ -40,6 +42,7 @@ adding \"case\" is optional to enable case sensitive grep");
     }
 }
 
+/// processing point of program
 pub fn run(conf: Configs) -> Result<(), Box<dyn Error>> {
     let contents: String = fs::read_to_string(conf.filename)?;
 
@@ -52,7 +55,7 @@ pub fn run(conf: Configs) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-pub fn search_case_sensitive<'a>(pattern: &str, contents: &'a str) -> Vec<&'a str> {
+fn search_case_sensitive<'a>(pattern: &str, contents: &'a str) -> Vec<&'a str> {
     contents.lines()
     .filter(
         |lin| lin
@@ -60,7 +63,7 @@ pub fn search_case_sensitive<'a>(pattern: &str, contents: &'a str) -> Vec<&'a st
     .collect()
 }
 
-pub fn search_case_insensitive<'a>(pattern: &str, contents: &'a str) -> Vec<&'a str> {
+fn search_case_insensitive<'a>(pattern: &str, contents: &'a str) -> Vec<&'a str> {
     contents.lines()
     .filter(
         |lin| lin.to_lowercase()
@@ -68,7 +71,7 @@ pub fn search_case_insensitive<'a>(pattern: &str, contents: &'a str) -> Vec<&'a 
     .collect()
 }
 
-pub fn print_output(out: Vec<&str>) {
+fn print_output(out: Vec<&str>) {
     println!("matched: {}", out.len());
     for x in out {
         println!("{}", x);
